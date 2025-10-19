@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  user
+  admin
+}
+
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  emailVerified Boolean @default(false)
+  image String? 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  role Role @default(user)
+  sessions Session[]
+  accounts Account[]
+  products Products[]
+
+}
+
+model Session {
+  id String @id @default(cuid())
+  expiresAt DateTime
+  token String @unique
+  ipAddress String?
+  userAgent String?
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+}
+
+model Account {
+  id String @id @default(cuid())
+  accountId String
+  providerId String
+  accessToken String? @db.Text
+  refreshToken String? @db.Text
+  idToken String? @db.Text
+  expiresAt DateTime?
+  password String? 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, providerId])
+}
+
+model Verification {
+  id String @id @default(cuid())
+  identifier String
+  value String 
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([identifier, value])
+}
+
+model Products {
+  id String @id @default(cuid())
+  name String
+  description String?
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

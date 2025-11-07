@@ -9,7 +9,7 @@ export default async function DashboardPage() {
     headers: await headers(),
   });
 
-  console.log("Dashboard Session:", session);
+  console.log("Dashboard Session:", session?.user.role);
 
   if (!session) {
     redirect("/auth/signin");
@@ -44,12 +44,7 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        {/* Products List */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b">
-            <h2 className="text-xl font-semibold">Products</h2>
-          </div>
-        </div>
+        <div></div>
       </main>
     </div>
   );

@@ -1,23 +1,28 @@
 "use client";
 
 import React from "react";
-import { useEffect, useState } from "react";
+import { useSession } from "@/app/lib/useSession";
 
-const page = () => {
-  useEffect(() => {
-    const response = async () => {
-      const res = await fetch("/api/me");
-      const data = await res.json();
-      console.log(data);
-    };
-    response();
-  }, []);
+const Page = () => {
+  const { user, loading } = useSession();
+
+  console.log("CEK Page - User:", user);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <div>Not logged in</div>;
+  }
 
   return (
     <div>
-      <h1>kamu siapa?</h1>
+      <h1>Hello, {user.name}!</h1>
+      <p>Your role is: {user.role}</p>
+      <p>Email: {user.email}</p>
     </div>
   );
 };
 
-export default page;
+export default Page;
